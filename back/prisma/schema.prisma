@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://sandyapi:Mion03122023@10.0.0.7:3306/sandy"
+}
+
+model compras {
+  id                Int      @id @default(autoincrement())
+  codigo_fornecedor Int
+  quantidade        Int
+  empenho           String   @db.VarChar(10)
+  data_entrega      DateTime @db.DateTime(0)
+  data_cadastro     DateTime @default(now()) @db.DateTime(0)
+}
+
+model entregadores {
+  id        Int    @id @default(autoincrement())
+  nome      String @db.VarChar(250)
+  matricula Int
+  local     Int
+}
+
+model estoque {
+  id                          Int      @id @default(autoincrement())
+  codigo_fornecedor           Int
+  quantidade                  Int
+  ultima_retirada_funcionario Int
+  data_atualizacao            DateTime @default(now()) @db.DateTime(0)
+}
+
+model fornecedores {
+  id            Int      @id @default(autoincrement())
+  codigo        Int
+  razao         String   @db.VarChar(150)
+  data_cadastro DateTime @default(now()) @db.DateTime(0)
+}
+
+model funcionarios {
+  id             Int       @id @default(autoincrement())
+  matricula      Int?
+  cartao         Int?
+  nome           String?   @db.VarChar(150)
+  vinculo        String?   @db.VarChar(100)
+  lotacao        String?   @db.VarChar(150)
+  local_trabalho String?   @db.VarChar(150)
+  cargo          String?   @db.VarChar(100)
+  folha          String?   @db.VarChar(50)
+  secretaria     String?   @db.VarChar(100)
+  email          String?   @db.VarChar(150)
+  celular        BigInt?   @db.UnsignedBigInt
+  direito_cesta  Int?
+  opcao_cesta    Int?
+  saldo          Int       @default(0)
+  validade       DateTime? @db.DateTime(0)
+  obs            String?   @db.VarChar(250)
+  ativo          Int?
+  img            String?   @db.Text
+}
+
+model log_fornecedores {
+  id Int @id @default(autoincrement())
+}
+
+model log_funcionarios {
+  id Int @id @default(autoincrement())
+}
+
+model log_retiradas {
+  id               Int      @id @default(autoincrement())
+  id_funcionario   Int
+  id_usuario       Int
+  local_retirada   Int
+  estoque_retirada Int
+  data_retirada    DateTime @default(now()) @db.DateTime(0)
+}
+
+model log_usuarios {
+  id Int @id @default(autoincrement())
+}
+
+model usuarios {
+  id            Int      @id @default(autoincrement())
+  matricula     Int
+  nome          String   @db.VarChar(150)
+  funcao        Int      @default(0)
+  senha         String   @db.VarChar(150)
+  data_cadastro DateTime @default(now()) @db.DateTime(0)
+  email         String   @db.VarChar(150)
+}
