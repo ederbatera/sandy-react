@@ -4,43 +4,32 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://sandyapi:Mion03122023@10.0.0.7:3306/sandy"
-}
-
-model compras {
-  id                Int      @id @default(autoincrement())
-  codigo_fornecedor Int
-  quantidade        Int
-  empenho           String   @db.VarChar(10)
-  data_entrega      DateTime @db.DateTime(0)
-  data_cadastro     DateTime @default(now()) @db.DateTime(0)
-}
-
-model entregadores {
-  id        Int    @id @default(autoincrement())
-  nome      String @db.VarChar(250)
-  matricula Int
-  local     Int
+  url      = "mysql://ederbatera:Mion@03122023@db.agudos.digital:3306/sandy_dev"
 }
 
 model estoque {
-  id                          Int      @id @default(autoincrement())
-  codigo_fornecedor           Int
-  quantidade                  Int
-  ultima_retirada_funcionario Int
-  data_atualizacao            DateTime @default(now()) @db.DateTime(0)
+  id                  Int      @id @default(autoincrement())
+  codigo_fornecedor   Int
+  quantidade          Int
+  quantidade_inicial  Int
+  data_atualizacao    DateTime @default(now()) @db.DateTime(0)
+  data_cadastro       DateTime @default(now()) @db.DateTime(0)
+  data_inicio_entrega DateTime @db.Date
+  data_fim_entrega    DateTime @db.Date
+  id_usuario          Int
 }
 
 model fornecedores {
   id            Int      @id @default(autoincrement())
   codigo        Int
   razao         String   @db.VarChar(150)
+  id_usuario    Int
   data_cadastro DateTime @default(now()) @db.DateTime(0)
 }
 
 model funcionarios {
   id             Int       @id @default(autoincrement())
-  matricula      Int?
+  matricula      Int?      @unique(map: "unique_matricula")
   cartao         Int?
   nome           String?   @db.VarChar(150)
   vinculo        String?   @db.VarChar(100)
@@ -51,42 +40,81 @@ model funcionarios {
   secretaria     String?   @db.VarChar(100)
   email          String?   @db.VarChar(150)
   celular        BigInt?   @db.UnsignedBigInt
-  direito_cesta  Int?
-  opcao_cesta    Int?
+  notificacao    Int       @default(0)
+  direito_cesta  Int?      @default(1)
+  distrito       Int       @default(0)
   saldo          Int       @default(0)
   validade       DateTime? @db.DateTime(0)
   obs            String?   @db.VarChar(250)
-  ativo          Int?
+  ativo          Int?      @default(1)
   img            String?   @db.Text
-}
-
-model log_fornecedores {
-  id Int @id @default(autoincrement())
+  create_at      DateTime  @default(now()) @db.DateTime(0)
+  update_at      DateTime  @default(dbgenerated("('0000-00-00 00:00:00')")) @db.Timestamp(0)
 }
 
 model log_funcionarios {
-  id Int @id @default(autoincrement())
-}
-
-model log_retiradas {
   id               Int      @id @default(autoincrement())
+  evento           String   @db.VarChar(150)
+  id_user          Int
   id_funcionario   Int
-  id_usuario       Int
-  local_retirada   Int
-  estoque_retirada Int
-  data_retirada    DateTime @default(now()) @db.DateTime(0)
+  nome_funcionario String   @db.VarChar(250)
+  create_at        DateTime @default(now()) @db.DateTime(0)
 }
 
-model log_usuarios {
-  id Int @id @default(autoincrement())
+model log_login {
+  id      Int      @id @default(autoincrement())
+  usuario Int
+  date    DateTime @default(now()) @db.Timestamp(0)
+  ip      String   @db.VarChar(50)
+  metodo  String   @db.VarChar(10)
+}
+
+model log_mensagens {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  numeros    String   @db.LongText
+  mensagem   String   @db.Text
+  success    Int
+  fail       Int
+  data_envio DateTime @default(now()) @db.DateTime(0)
+}
+
+model log_saldo_massa {
+  id              Int      @id @default(autoincrement())
+  evento          String   @db.VarChar(250)
+  id_user         Int
+  id_funcionarios String   @db.Text
+  create_at       DateTime @default(now()) @db.DateTime(0)
+}
+
+model logs {
+  id               Int      @id @default(autoincrement())
+  evento           String   @db.VarChar(450)
+  id_user          Int
+  id_funcionario   Int?
+  nome_funcionario String?  @db.VarChar(250)
+  create_at        DateTime @default(now()) @db.Timestamp(0)
+}
+
+model retiradas {
+  id                Int      @id @default(autoincrement())
+  id_funcionario    Int
+  id_user           Int
+  codigo_fornecedor Int?
+  estoque           Int?
+  data_retirada     DateTime @default(now()) @db.DateTime(0)
 }
 
 model usuarios {
   id            Int      @id @default(autoincrement())
+  nome          String   @db.VarChar(50)
+  password      String?  @db.VarChar(150)
   matricula     Int
-  nome          String   @db.VarChar(150)
-  funcao        Int      @default(0)
-  senha         String   @db.VarChar(150)
+  cargo         String   @db.VarChar(20)
+  usuario       String?  @db.VarChar(20)
+  email         String   @unique(map: "email") @db.VarChar(150)
+  senha         String   @db.VarChar(256)
+  permissao     Int
+  status        String   @db.VarChar(1)
   data_cadastro DateTime @default(now()) @db.DateTime(0)
-  email         String   @db.VarChar(150)
 }
