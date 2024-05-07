@@ -1,6 +1,10 @@
+import { useContext } from "react";
 import { LayoutComponents } from "../../components/LayoutComponents";
+import { AuthContext } from "../../context/AuthContext";
 
 export const Home = () => {
+  const { user } = useContext(AuthContext);
+  console.log(user)
   return (
     <LayoutComponents>
       <div className="home-container">
